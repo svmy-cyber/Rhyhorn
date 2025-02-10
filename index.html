@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloading HardenSandbox.exe...</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var fileUrl = "HardenSandbox.exe"; 
+            var downloadLink = document.createElement("a");
+            downloadLink.href = fileUrl;
+            downloadLink.download = "HardenSandbox.exe";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    </script>
+</head>
+<body>
+    <h1>Your download should start automatically...</h1>
+    <p>If the download does not start, <a href="HardenSandbox.exe" download>click here</a> to download manually.</p>
+</body>
+</html>
