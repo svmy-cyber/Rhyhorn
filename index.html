@@ -3,21 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Downloading HardenSandbox.exe...</title>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var fileUrl = "HardenSandbox.exe"; 
-            var downloadLink = document.createElement("a");
-            downloadLink.href = fileUrl;
-            downloadLink.download = "HardenSandbox.exe";
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-        });
-    </script>
+    <title>Windows Sandbox Hardening</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .hero {
+            padding: 40px 20px;
+            border-radius: 12px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        .hero-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .box {
+            max-width: 800px; /* Reduced max width for better readability */
+            margin: 20px auto; /* Centering boxes */
+        }
+        .download-section {
+            display: flex;
+            justify-content: space-around; /* Adjusted spacing */
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .download-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto; /* Pins footer to bottom */
+        }
+        .heart {
+            color: red;
+        }
+        .content ul {
+            text-align: left; /* Left-aligns feature list */
+        }
+    </style>
 </head>
 <body>
-    <h1>Your download should start automatically...</h1>
-    <p>If the download does not start, <a href="HardenSandbox.exe" download>click here</a> to download manually.</p>
+
+    <div class="container">
+        <section class="hero has-text-centered">
+            <h1 class="hero-title">🛡️ Windows Sandbox Hardening</h1>
+            <p>Secure your Windows Sandbox environment by disabling unnecessary features and blocking network access.</p>
+        </section>
+
+        <div class="box has-text-centered">
+            <p>
+                This tool hardens Windows Sandbox, restricting local network access and disabling features commonly exploited by malware.
+                Use this page to download the EXE or PowerShell script without exposing your internal network to the sandbox.
+            </p>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5">📌 Features</h2>
+            <ul class="content">
+                <li>✅ Blocks Local Network Access (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)</li>
+                <li>✅ Disables Windows Script Host (WSH) (Prevents execution of .vbs, .js, .wsf scripts)</li>
+                <li>✅ Restricts PowerShell Execution (Sets execution policy to Restricted)</li>
+                <li>✅ Blocks Remote Desktop (RDP) & Remote Assistance</li>
+                <li>✅ Disables SMB File Sharing & NetBIOS Over TCP/IP</li>
+                <li>✅ Prevents AutoRun & AutoPlay (Blocks automatic script execution from external drives)</li>
+                <li>✅ Disables IPv6 Teredo Tunneling (Prevents some types of network tunneling)</li>
+                <li>✅ Blocks ICMP (Ping) Traffic via Registry (Does not fully prevent all ping methods)</li>
+                <li>✅ Disables Background Services (Windows Installer, Task Scheduler, WebClient, BITS)</li>
+                <li>✅ Removes Windows Store Access (Prevents unauthorized app installations)</li>
+                <li>✅ Disables OneDrive Sync (Prevents file syncing from sandbox to cloud storage)</li>
+                <li>✅ Blocks Game Bar & Xbox DVR (Prevents screen recording & gaming overlays)</li>
+                <li>✅ Disables Camera & Microphone Access</li>
+                <li>✅ Disables Windows Error Reporting (Prevents crash data from being sent to Microsoft)</li>
+                <li>✅ Disables Speech Recognition & Wi-Fi Sense</li>
+            </ul>
+        </div>
+
+        <div class="box">
+            <div class="download-section">
+                <div class="download-buttons">
+                    <a href="HardenSandbox.exe" class="button is-primary is-large">
+                        🔒 Download EXE
+                    </a>
+                    <a href="SecureSandbox.ps1" class="button is-link is-large">
+                        🖥️ Download PowerShell
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>
+                Made with <span class="heart">❤️</span> by 
+                <a href="https://www.linkedin.com/in/svmyoung/" target="_blank">
+                    Sam Young
+                </a>
+            </p>
+        </footer>
+    </div>
+
 </body>
 </html>
