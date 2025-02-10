@@ -27,12 +27,12 @@
             font-weight: bold;
         }
         .box {
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 800px; /* Reduced max width for better readability */
+            margin: 20px auto; /* Centering boxes */
         }
         .download-section {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-around; /* Adjusted spacing */
             align-items: center;
             flex-wrap: wrap;
         }
@@ -43,13 +43,13 @@
         .footer {
             text-align: center;
             padding: 20px 0;
-            margin-top: auto;
+            margin-top: auto; /* Pins footer to bottom */
         }
         .heart {
             color: red;
         }
         .content ul {
-            text-align: left;
+            text-align: left; /* Left-aligns feature list */
         }
     </style>
 </head>
@@ -64,7 +64,11 @@
         <div class="box has-text-centered">
             <p>
                 This tool hardens Windows Sandbox, restricting local network access and disabling features commonly exploited by malware.
-                Use this page to download the EXE or PowerShell script without exposing your internal network to the sandbox.
+                Use this page to download the EXE or PowerShell script without exposing your internal network to the sandbox. 
+	    </p>
+	    </br>
+	    <p>
+		You can download a pre-configured Windows Sandbox launcher <a href="SandboxLauncher.wsb">here</a>. Any Sandbox launched via this file will auto-load this page, allowing you to download and run 		the hardening script/executable.
             </p>
         </div>
 
@@ -95,7 +99,7 @@
                     <a href="HardenSandbox.exe" class="button is-primary is-large">
                         🔒 Download EXE
                     </a>
-                    <a href="HardenSandbox.ps1" class="button is-link is-large">
+                    <a href="SecureSandbox.ps1" class="button is-link is-large">
                         🖥️ Download PowerShell
                     </a>
                 </div>
