@@ -6,7 +6,6 @@
     <VideoInput>Disable</VideoInput>
     <ProtectedClient>Enable</ProtectedClient>
     <PrinterRedirection>Disable</PrinterRedirection>
-    <ClipboardRedirection>Disable</ClipboardRedirection>
     <MemoryInMB>4096</MemoryInMB>
     <LogonCommand>
         <Command>cmd /c start "" "https://harden.svmy.link/"</Command>
