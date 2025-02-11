@@ -1,4 +1,4 @@
-# Windows Security Hardening Script
+# Windows Sandbox Hardening Script
 
 A PowerShell-based security hardening tool for Windows systems that implements multiple layers of security controls through a structured, sequence-based approach.
 
