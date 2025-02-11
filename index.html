@@ -72,24 +72,29 @@
             </p>
         </div>
 
-        <div class="box">
-            <h2 class="title is-5">📌 Features</h2>
-            <ul class="content">
-                <li>✅ Blocks Local Network Access (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)</li>
-                <li>✅ Disables Windows Script Host (WSH) (Prevents execution of .vbs, .js, .wsf scripts)</li>
-                <li>✅ Restricts PowerShell Execution (Sets execution policy to Restricted)</li>
-                <li>✅ Blocks Remote Desktop (RDP) & Remote Assistance</li>
-                <li>✅ Disables SMB File Sharing & NetBIOS Over TCP/IP</li>
-                <li>✅ Prevents AutoRun & AutoPlay (Blocks automatic script execution from external drives)</li>
-                <li>✅ Disables IPv6 Teredo Tunneling (Prevents some types of network tunneling)</li>
-                <li>✅ Blocks ICMP (Ping) Traffic via Registry (Does not fully prevent all ping methods)</li>
-                <li>✅ Disables Background Services (Windows Installer, Task Scheduler, WebClient, BITS)</li>
-                <li>✅ Removes Windows Store Access (Prevents unauthorized app installations)</li>
-                <li>✅ Disables OneDrive Sync (Prevents file syncing from sandbox to cloud storage)</li>
-                <li>✅ Blocks Game Bar & Xbox DVR (Prevents screen recording & gaming overlays)</li>
-                <li>✅ Disables Camera & Microphone Access</li>
-                <li>✅ Disables Windows Error Reporting (Prevents crash data from being sent to Microsoft)</li>
-                <li>✅ Disables Speech Recognition & Wi-Fi Sense</li>
+        <div className="box">
+            <h2 className="title is-5">📌 Security Features</h2>
+            <ul className="content">
+                <li>✅ Blocks Private Networks (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16)</li>
+                <li>✅ Disables Network Discovery and File Sharing</li>
+                <li>✅ Disables NetBIOS over TCP/IP</li>
+                <li>✅ Completely Disables IPv6 Components</li>
+                <li>✅ Blocks Remote Desktop Connections</li>
+                <li>✅ Disables Windows Script Host (Prevents VBS and JS script execution)</li>
+                <li>✅ Restricts PowerShell Execution Policy to "Restricted"</li>
+                <li>✅ Implements Software Restriction Policies</li>
+                <li>✅ Disables Registry Tools</li>
+                <li>✅ Disables Task Manager</li>
+                <li>✅ Disables Command Prompt</li>
+                <li>✅ Enables Edge SmartScreen Protection</li>
+                <li>✅ Disables JavaScript JIT Compilation in Edge</li>
+                <li>✅ Restricts Edge Downloads</li>
+                <li>✅ Blocks All Edge Extensions</li>
+                <li>✅ Disables Browser Autofill and Password Manager</li>
+                <li>✅ Enforces TLS 1.2 Minimum and Certificate Checks</li>
+                <li>✅ Implements Process Whitelisting with SHA256 Verification</li>
+                <li>✅ Generates Detailed Security Reports and Logs</li>
+                <li>✅ Verifies All Applied Settings</li>
             </ul>
         </div>
 
