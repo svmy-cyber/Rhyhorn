@@ -1,119 +1,176 @@
-# ===============================
-# 🔹 STEP 1: DISABLE SECURITY-RISK FEATURES 🔹
-# ===============================
+# Windows Security Hardening Script
+# Provides systematic hardening of Windows environments through feature control and network isolation
 
-# Track success/failure of each step
-$HardeningErrors = @()
+class SecurityFeature {
+    [string]$Name
+    [string]$RegistryKey
+    [string]$ValueName
+    [object]$Value
+    [string]$Type
 
-# 🚫 Disable Commonly Abused Features by Malware
-$featuresToDisable = @(
-    # 🔹 SYSTEM SECURITY 🔹
-    @{ Name = "Windows Script Host (WSH)"; Key = "HKLM:\Software\Microsoft\Windows Script Host\Settings"; ValueName = "Enabled"; Value = 0; Type = "DWORD" }
-    @{ Name = "PowerShell Execution"; Key = "HKLM:\Software\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"; ValueName = "ExecutionPolicy"; Value = "Restricted"; Type = "String" }
-    @{ Name = "Remote Desktop (RDP)"; Key = "HKLM:\System\CurrentControlSet\Control\Terminal Server"; ValueName = "fDenyTSConnections"; Value = 1; Type = "DWORD" }
-    @{ Name = "AutoRun & AutoPlay"; Key = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"; ValueName = "NoDriveTypeAutoRun"; Value = 255; Type = "DWORD" }
-
-    # 🔹 REMOTE ACCESS 🔹
-    @{ Name = "SMB File Sharing"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"; ValueName = "SMB1"; Value = 0; Type = "DWORD" }
-    @{ Name = "Windows Remote Shell"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\WinRM"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-    @{ Name = "Remote Assistance"; Key = "HKLM:\System\CurrentControlSet\Control\Remote Assistance"; ValueName = "fAllowToGetHelp"; Value = 0; Type = "DWORD" }
-
-    # 🔹 NETWORK & COMMUNICATION 🔹
-    @{ Name = "NetBIOS over TCP/IP"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters"; ValueName = "EnableNetbiosOverTcpip"; Value = 2; Type = "DWORD" }
-    @{ Name = "IPv6 Teredo Tunneling"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"; ValueName = "DisabledComponents"; Value = 255; Type = "DWORD" }
-    @{ Name = "ICMP (Ping)"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"; ValueName = "DisableICMP"; Value = 1; Type = "DWORD" }
-
-    # 🔹 UNNEEDED SERVICES 🔹
-    @{ Name = "Windows Installer"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\MSIServer"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-    @{ Name = "Background Intelligent Transfer Service (BITS)"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\BITS"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-    @{ Name = "Task Scheduler"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\Schedule"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-    @{ Name = "WebClient (WebDAV)"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\WebClient"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-
-    # 🔹 APPLICATION BLOCKING 🔹
-    @{ Name = "Internet Explorer"; Key = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"; ValueName = "NoInternetOpenWith"; Value = 1; Type = "DWORD" }
-    @{ Name = "Windows Media Sharing"; Key = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"; ValueName = "NoMediaSharing"; Value = 1; Type = "DWORD" }
-    @{ Name = "Game Bar"; Key = "HKCU:\Software\Microsoft\GameBar"; ValueName = "AllowAutoGameMode"; Value = 0; Type = "DWORD" }
-    @{ Name = "Xbox Game DVR"; Key = "HKCU:\System\GameConfigStore"; ValueName = "GameDVR_Enabled"; Value = 0; Type = "DWORD" }
-    @{ Name = "Windows Search Indexing"; Key = "HKLM:\SYSTEM\CurrentControlSet\Services\WSearch"; ValueName = "Start"; Value = 4; Type = "DWORD" }
-    @{ Name = "OneDrive Integration"; Key = "HKLM:\Software\Policies\Microsoft\Windows\OneDrive"; ValueName = "DisableFileSyncNGSC"; Value = 1; Type = "DWORD" }
-    @{ Name = "Windows Error Reporting"; Key = "HKLM:\Software\Microsoft\Windows\Windows Error Reporting"; ValueName = "Disabled"; Value = 1; Type = "DWORD" }
-    @{ Name = "Camera Access"; Key = "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam"; ValueName = "Value"; Value = "Deny"; Type = "String" }
-    @{ Name = "Microphone Access"; Key = "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone"; ValueName = "Value"; Value = "Deny"; Type = "String" }
-    @{ Name = "Windows Store"; Key = "HKLM:\Software\Policies\Microsoft\WindowsStore"; ValueName = "RemoveWindowsStore"; Value = 1; Type = "DWORD" }
-    @{ Name = "Speech Recognition"; Key = "HKLM:\Software\Policies\Microsoft\Speech"; ValueName = "AllowSpeechServices"; Value = 0; Type = "DWORD" }
-    @{ Name = "Wi-Fi Sense"; Key = "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\config"; ValueName = "AutoConnectAllowedOEM"; Value = 0; Type = "DWORD" }
-)
-
-foreach ($feature in $featuresToDisable) {
-    # Check if the key exists
-    if (-not (Test-Path $feature.Key)) {
-        New-Item -Path $feature.Key -Force | Out-Null
-    }
-
-    # Apply correct type (String vs. DWORD)
-    if ($feature.Type -eq "String") {
-        New-ItemProperty -Path $feature.Key -Name $feature.ValueName -Value $feature.Value -PropertyType String -Force | Out-Null
-    } else {
-        New-ItemProperty -Path $feature.Key -Name $feature.ValueName -Value $feature.Value -PropertyType DWord -Force | Out-Null
+    SecurityFeature([string]$name, [string]$key, [string]$valueName, [object]$value, [string]$type) {
+        $this.Name = $name
+        $this.RegistryKey = $key
+        $this.ValueName = $valueName
+        $this.Value = $value
+        $this.Type = $type
     }
 }
 
-# ===============================
-# ✅ STEP 2: BLOCK INTERNAL NETWORK ACCESS ✅
-# ===============================
+class NetworkBlock {
+    [string]$Subnet
+    [string]$Mask
+    [string]$TestIP
 
-$subnets = @(
-    "10.0.0.0 mask 255.0.0.0",      
-    "172.16.0.0 mask 255.240.0.0",  
-    "192.168.0.0 mask 255.255.0.0"      
-)
-
-foreach ($subnet in $subnets) {
-    Start-Process -FilePath "cmd.exe" -ArgumentList "/c route add $subnet 0.0.0.0 -p" -NoNewWindow -Wait
-}
-
-# ===============================
-# ✅ STEP 3: VERIFY SETTINGS ✅
-# ===============================
-
-# Test connectivity to each blocked subnet
-$testAddresses = @(
-    "10.0.0.1",
-    "172.16.0.1",
-    "192.168.1.1"
-)
-
-foreach ($testIP in $testAddresses) {
-    $testResult = Test-Connection -ComputerName $testIP -Count 1 -ErrorAction SilentlyContinue
-    if ($testResult) {
-        $HardeningErrors += "Local Network Block Bypass Detected for $testIP"
+    NetworkBlock([string]$subnet, [string]$mask, [string]$testIP) {
+        $this.Subnet = $subnet
+        $this.Mask = $mask
+        $this.TestIP = $testIP
     }
 }
 
-# Verify feature disabling
-foreach ($feature in $featuresToDisable) {
-    $currentValue = (Get-ItemProperty -Path $feature.Key -Name $feature.ValueName -ErrorAction SilentlyContinue).$($feature.ValueName)
-    
-    if ($feature.Type -eq "String") {
-        if ($currentValue -ne $feature.Value) {
-            $HardeningErrors += "Feature still enabled: $($feature.Name)"
+class HardeningManager {
+    [System.Collections.Generic.List[SecurityFeature]]$Features
+    [System.Collections.Generic.List[NetworkBlock]]$NetworkBlocks
+    [System.Collections.Generic.List[string]]$Errors
+    [string]$LogPath
+
+    HardeningManager() {
+        $this.Features = [System.Collections.Generic.List[SecurityFeature]]::new()
+        $this.NetworkBlocks = [System.Collections.Generic.List[NetworkBlock]]::new()
+        $this.Errors = [System.Collections.Generic.List[string]]::new()
+        $this.LogPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop")
+        $this.InitializeFeatures()
+        $this.InitializeNetworkBlocks()
+    }
+
+    [void]InitializeFeatures() {
+        # System Security
+        $this.AddFeature("Windows Script Host", "HKLM:\Software\Microsoft\Windows Script Host\Settings", "Enabled", 0, "DWORD")
+        $this.AddFeature("PowerShell Execution", "HKLM:\Software\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell", "ExecutionPolicy", "Restricted", "String")
+        $this.AddFeature("Remote Desktop", "HKLM:\System\CurrentControlSet\Control\Terminal Server", "fDenyTSConnections", 1, "DWORD")
+        
+        # Remote Access
+        $this.AddFeature("SMB File Sharing", "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters", "SMB1", 0, "DWORD")
+        $this.AddFeature("Windows Remote Shell", "HKLM:\SYSTEM\CurrentControlSet\Services\WinRM", "Start", 4, "DWORD")
+        
+        # Network Security
+        $this.AddFeature("NetBIOS over TCP/IP", "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters", "EnableNetbiosOverTcpip", 2, "DWORD")
+        $this.AddFeature("IPv6 Teredo", "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters", "DisabledComponents", 255, "DWORD")
+        
+        # Application Control
+        $this.AddFeature("Windows Store", "HKLM:\Software\Policies\Microsoft\WindowsStore", "RemoveWindowsStore", 1, "DWORD")
+        $this.AddFeature("OneDrive", "HKLM:\Software\Policies\Microsoft\Windows\OneDrive", "DisableFileSyncNGSC", 1, "DWORD")
+        $this.AddFeature("Error Reporting", "HKLM:\Software\Microsoft\Windows\Windows Error Reporting", "Disabled", 1, "DWORD")
+    }
+
+    [void]InitializeNetworkBlocks() {
+        $this.NetworkBlocks.Add([NetworkBlock]::new("10.0.0.0", "255.0.0.0", "10.0.0.1"))
+        $this.NetworkBlocks.Add([NetworkBlock]::new("172.16.0.0", "255.240.0.0", "172.16.0.1"))
+        $this.NetworkBlocks.Add([NetworkBlock]::new("192.168.0.0", "255.255.0.0", "192.168.1.1"))
+    }
+
+    [void]AddFeature([string]$name, [string]$key, [string]$valueName, [object]$value, [string]$type) {
+        $this.Features.Add([SecurityFeature]::new($name, $key, $valueName, $value, $type))
+    }
+
+    [void]ApplyHardening() {
+        $this.ApplyFeatureControls()
+        $this.ApplyNetworkBlocks()
+        $this.VerifySettings()
+        $this.LogResults()
+    }
+
+    [void]ApplyFeatureControls() {
+        foreach ($feature in $this.Features) {
+            try {
+                if (-not (Test-Path $feature.RegistryKey)) {
+                    New-Item -Path $feature.RegistryKey -Force | Out-Null
+                }
+
+                $params = @{
+                    Path = $feature.RegistryKey
+                    Name = $feature.ValueName
+                    Value = $feature.Value
+                    PropertyType = $feature.Type
+                    Force = $true
+                    ErrorAction = "Stop"
+                }
+
+                New-ItemProperty @params | Out-Null
+            }
+            catch {
+                $this.Errors.Add("Failed to configure $($feature.Name): $_")
+            }
         }
-    } elseif ($currentValue -ne [int]$feature.Value) {
-        $HardeningErrors += "Feature still enabled: $($feature.Name)"
+    }
+
+    [void]ApplyNetworkBlocks() {
+        foreach ($block in $this.NetworkBlocks) {
+            try {
+                $command = "route add $($block.Subnet) mask $($block.Mask) 0.0.0.0 -p"
+                Start-Process -FilePath "cmd.exe" -ArgumentList "/c $command" -NoNewWindow -Wait
+            }
+            catch {
+                $this.Errors.Add("Failed to block network $($block.Subnet): $_")
+            }
+        }
+    }
+
+    [void]VerifySettings() {
+        $this.VerifyNetworkBlocks()
+        $this.VerifyFeatures()
+    }
+
+    [void]VerifyNetworkBlocks() {
+        foreach ($block in $this.NetworkBlocks) {
+            $testResult = Test-Connection -ComputerName $block.TestIP -Count 1 -ErrorAction SilentlyContinue
+            if ($testResult) {
+                $this.Errors.Add("Network block bypass detected for $($block.TestIP)")
+            }
+        }
+    }
+
+    [void]VerifyFeatures() {
+        foreach ($feature in $this.Features) {
+            try {
+                $currentValue = (Get-ItemProperty -Path $feature.RegistryKey -Name $feature.ValueName -ErrorAction Stop).$($feature.ValueName)
+                
+                if ($feature.Type -eq "String") {
+                    if ($currentValue -ne $feature.Value) {
+                        $this.Errors.Add("Feature still enabled: $($feature.Name)")
+                    }
+                }
+                elseif ($currentValue -ne [int]$feature.Value) {
+                    $this.Errors.Add("Feature still enabled: $($feature.Name)")
+                }
+            }
+            catch {
+                $this.Errors.Add("Failed to verify $($feature.Name): $_")
+            }
+        }
+    }
+
+    [void]LogResults() {
+        $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+        $logFile = if ($this.Errors.Count -eq 0) {
+            Join-Path $this.LogPath "HardeningSuccess_$timestamp.log"
+        }
+        else {
+            Join-Path $this.LogPath "HardeningErrors_$timestamp.log"
+        }
+
+        $status = if ($this.Errors.Count -eq 0) {
+            "Windows Security Hardening completed successfully"
+        }
+        else {
+            "Windows Security Hardening encountered issues:`n`n$($this.Errors | ForEach-Object { "- $_`n" })"
+        }
+
+        $status | Out-File -FilePath $logFile -Encoding utf8
     }
 }
 
-# ===============================
-# 📄 STEP 4: LOG RESULTS TO FILE 📄
-# ===============================
-
-$desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop")
-
-if ($HardeningErrors.Count -eq 0) {
-    $successFile = [System.IO.Path]::Combine($desktopPath, "SuccessfullyCompletedHardening.txt")
-    "Windows Sandbox Hardening completed successfully on $(Get-Date)." | Out-File -FilePath $successFile -Encoding utf8
-} else {
-    $errorFile = [System.IO.Path]::Combine($desktopPath, "HardeningErrorReport.txt")
-    "Windows Sandbox Hardening encountered issues on $(Get-Date)." | Out-File -FilePath $errorFile -Encoding utf8
-    $HardeningErrors | Out-File -FilePath $errorFile -Encoding utf8 -Append
-}
+# Execute hardening
+$hardening = [HardeningManager]::new()
+$hardening.ApplyHardening()
