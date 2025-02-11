@@ -1,67 +1,156 @@
-# 🛡️ Windows Sandbox Hardening
-## Secure Windows Sandbox for Safe Web Browsing
+# Windows Security Hardening Script
 
-This project **locks down Windows Sandbox** by **disabling unnecessary features, blocking internal network access, and restricting system functionality** to enhance security.
+A PowerShell-based security hardening tool for Windows systems that implements multiple layers of security controls through a structured, sequence-based approach.
 
----
+## Features
 
-## 📌 Features
-✅ **Blocks Local Network Access** (LAN, APIPA, and localhost)  
-✅ **Disables High-Risk Windows Features** (SMB, Remote Desktop, NetBIOS, etc.)  
-✅ **Prevents Malicious Script Execution** (PowerShell, Windows Script Host)  
-✅ **Disables Unnecessary Applications** (Game Bar, Xbox DVR, OneDrive, Speech Recognition, etc.)  
-✅ **Increases UAC Security** (Forces password prompt for admin tasks)  
-✅ **Allows Only Web Browsing via Microsoft Edge**  
+### Network Security
+- Blocks access to private networks (RFC1918) using black hole routing
+- Disables IPv6 components
+- Disables NetBIOS over TCP/IP
+- Disables Network Discovery
 
----
+### System Hardening
+- Restricts Windows Script Host
+- Enforces restricted PowerShell execution policy
+- Disables Remote Desktop connections
+- Implements Software Restriction Policies (SRP) for process control
+- Disables command prompt access
+- Restricts access to Registry Tools and Task Manager
 
-## 🛠️ Installation
-### 🔹 Option 1: Run as PowerShell Script
-1. Download **`SecureSandbox.ps1`**  
-2. Open PowerShell **as Administrator**  
-3. Run the following command:
-   ```powershell
-   Set-ExecutionPolicy Bypass -Scope Process -Force
-   .\SecureSandbox.ps1
-   ```
+### Browser Security (Microsoft Edge)
+- Enables SmartScreen protection
+- Disables JavaScript JIT compilation
+- Restricts download capabilities
+- Blocks extension installations
+- Disables autofill features
+- Enforces TLS 1.2
+- Restricts various browser permissions (geolocation, notifications, etc.)
 
-### 🔹 Option 2: Run as an EXE
-1. Download **`HardenSandbox.EXE`**  
-2. **Double-click** to execute  
-3. The sandbox hardening process runs automatically  
+## Requirements
 
----
+- Windows 10 or Windows Server 2016 and above
+- PowerShell 5.1 or higher
+- Administrative privileges
+- Microsoft Edge browser (for browser hardening features)
 
-## 🚀 Usage
-1. **Run the script or EXE inside Windows Sandbox**  
-2. The script will:
-   - **Disable high-risk features**
-   - **Block local network access**
-   - **Verify security measures**
-3. If successful, a **`SuccessfullyCompletedHardening.txt`** file is created on the desktop.  
-4. If any issues occur, a **`HardeningErrorReport.txt`** is generated.  
+## Installation
 
----
+1. Download the `Windows-Hardening.ps1` script
+2. Verify the script's digital signature (if provided)
+3. Place the script in your preferred location
 
-## 🔧 How It Works
-The script modifies **Windows Registry settings, network routes, and security policies** to create a **safe, isolated environment**.  
+## Usage
 
-### 🛡️ Hardening Steps:
-- **Blocks local network access** using `route add`
-- **Disables remote access tools** (SMB, RDP, Remote Assistance)
-- **Prevents script-based attacks** (Restricts PowerShell & Windows Script Host)
-- **Forces UAC password prompt** to prevent silent privilege escalation
-- **Prevents app installations** (Disables Windows Store & OneDrive Sync)
-- **Blocks unnecessary Windows features** (Game Bar, Search Indexing, Speech Services)
+```powershell
+# Run as Administrator
+.\Windows-Hardening.ps1
+```
 
----
+**Important**: Always test this script in a controlled environment before deploying to production systems.
 
-## 📝 Notes
-- **Windows Sandbox resets on restart** → The script must be **rerun each session**  
-- **Requires Administrator Privileges**  
-- **Microsoft Edge is the only functional app after hardening**  
+## Script Components
 
----
+### Classes
+- `SecurityFeature`: Defines security settings and their properties
+- `NetworkBlock`: Defines network blocking rules
+- `HardeningManager`: Main class that manages the hardening process
 
-## 📜 License
-This project is **open-source** and provided **without warranty**.  
+### Sequence Stages
+1. Network Controls (Stage 1)
+2. System Hardening (Stage 2)
+3. Browser Security (Stage 3)
+4. Advanced Restrictions (Stage 4)
+5. Final Lockdown (Stage 5)
+
+## Logging
+
+The script generates detailed logs including:
+- Applied security features
+- Network blocks
+- Allowed processes
+- Errors and warnings
+- Summary statistics
+
+Logs are saved to: `%USERPROFILE%\Desktop\HardeningResults_[timestamp].log`
+
+## Verification
+
+The script includes comprehensive verification:
+- Registry setting validation
+- Network route verification
+- Process restriction validation
+- Browser configuration checks
+
+## Customization
+
+### Adding Network Blocks
+```powershell
+$this.NetworkBlocks.Add([NetworkBlock]::new(
+    "192.168.1.0",    # Subnet
+    "255.255.255.0",  # Mask
+    "192.168.1.1",    # Test IP
+    "Description"     # Description
+))
+```
+
+### Adding Allowed Processes
+```powershell
+$this.AllowedProcesses.Add("process.exe")
+```
+
+### Adding Security Features
+```powershell
+$this.AddFeature(
+    "Feature Name",
+    "Registry Key Path",
+    "Value Name",
+    $value,
+    "Value Type",
+    "Category",
+    $sequenceOrder
+)
+```
+
+## Security Considerations
+
+- The script implements restrictive controls that may impact system usability
+- Some features (like disabling Task Manager) could make troubleshooting difficult
+- Network blocks affect internal network communication
+- Process restrictions may impact application functionality
+- Always maintain a way to reverse these changes in case of issues
+
+## Troubleshooting
+
+### Common Issues
+1. **Network Connectivity Issues**
+   - Check the network blocks in the log file
+   - Verify route configurations using `Get-NetRoute`
+
+2. **Process Restrictions**
+   - Review Software Restriction Policies
+   - Check the allowed processes list
+
+3. **Browser Issues**
+   - Verify Edge policy settings in Registry
+   - Check Edge browser version compatibility
+
+### Recovery
+1. Keep a backup of critical system settings
+2. Document any customizations made to the script
+3. Maintain a separate admin account that isn't affected by restrictions
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request with detailed changes
+4. Include test results from a controlled environment
+
+## License
+
+MIT License - Feel free to use and modify as needed, but please include attribution.
+
+## Disclaimer
+
+This script implements significant security controls that may impact system functionality. Use at your own risk and always test thoroughly before deployment.
